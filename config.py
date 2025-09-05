@@ -34,7 +34,7 @@ class AppConfig(BaseSettings):
     # Server Configuration
     server_name: str = Field(default="0.0.0.0", env="SERVER_NAME", description="Server host")
     server_port: int = Field(default=7860, env="SERVER_PORT", description="Server port")
-    share: bool = Field(default=False, env="SHARE", description="Enable public sharing")
+    share: bool = Field(default=True, env="SHARE", description="Enable public sharing")
     
     class Config:
         """Pydantic config."""
@@ -47,6 +47,8 @@ class AppConfig(BaseSettings):
     @classmethod
     def validate_openai_key(cls, v):
         """Validate OpenAI API key format."""
+        if v == "placeholder-key":
+            return v
         if not v.startswith("sk-"):
             raise ValueError("OpenAI API key must start with 'sk-'")
         return v
