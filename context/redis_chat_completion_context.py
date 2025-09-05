@@ -1,5 +1,6 @@
 import json
 import asyncio
+import os
 from typing import Any, List, Mapping, Optional
 
 from redis import Redis
@@ -15,7 +16,7 @@ from autogen_core.models import (
     UserMessage,
     FunctionExecutionResultMessage,
 )
-from autogen_ext.models.gemini import GeminiChatCompletionClient
+from autogen_ext.models.openai import OpenAIChatCompletionClient
 
 
 class RedisChatCompletionContextConfig(BaseModel):
@@ -72,8 +73,12 @@ class RedisChatCompletionContext(ChatCompletionContext, Component[RedisChatCompl
         self._summary_key = f"{redis_key_prefix}:{user_id}:summary"
         self._summary_upto_key = f"{redis_key_prefix}:{user_id}:summary_upto"
         
-        # Gemini client for summarization
-        self._summary_client = GeminiChatCompletionClient(model=summary_model)
+        # Gemini client for summarization via OpenAI-compatible API
+        self._summary_client = OpenAIChatCompletionClient(
+            model=summary_model,
+            api_key=os.environ.get("GOOGLE_API_KEY"),
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+        )
         
         # Initialize Redis with initial messages if provided
         if initial_messages:

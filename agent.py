@@ -31,7 +31,7 @@ from autogen_agentchat.messages import (
 )
 from autogen_core.tools import FunctionTool
 from autogen_core.memory import MemoryContent, MemoryMimeType
-from autogen_ext.models.gemini import GeminiChatCompletionClient
+from autogen_ext.models.openai import OpenAIChatCompletionClient
 from autogen_ext.memory.mem0 import Mem0Memory
 from tavily import TavilyClient
 from ics import Calendar, Event, DisplayAlarm
@@ -91,8 +91,10 @@ class TravelAgent:
 
         # Initialize shared clients
         self.tavily_client = TavilyClient(api_key=config.tavily_api_key)
-        self.agent_model = GeminiChatCompletionClient(
-            model=config.travel_agent_model
+        self.agent_model = OpenAIChatCompletionClient(
+            model=config.travel_agent_model,
+            api_key=config.google_api_key,
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
         )
 
         # Initialize user context cache
